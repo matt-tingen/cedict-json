@@ -1,0 +1,15 @@
+{
+  "name": "cedict-json",
+  "description": "JSON representation of the CC-CEDICT dataset",
+  "repository": "github:matt-tingen/cedict-json",
+  "author": "Matt Tingen <matt.tingen@gmail.com>",
+  "version": "1.0.0",
+  "license": "CC-BY-SA-4.0",
+  "main": "index.js",
+  "types": "types.d.ts",
+  "devDependencies": {
+    "@types/node": "^15.0.2",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  }
+}
