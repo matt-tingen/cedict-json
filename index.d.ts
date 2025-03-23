@@ -5,6 +5,7 @@ interface CedictEntry {
   english: string[];
 }
 
-declare const _default: CedictEntry[];
+declare const cedict: CedictEntry[];
 
-export { type CedictEntry, _default as default };
+export default cedict;
+export { type CedictEntry };
