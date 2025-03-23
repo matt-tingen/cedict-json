@@ -1,17 +1,33 @@
 {
   "name": "cedict-json",
+  "version": "1.2.0",
   "description": "JSON representation of the CC-CEDICT dataset",
   "repository": "github:matt-tingen/cedict-json",
-  "author": "Matt Tingen <matt.tingen@gmail.com>",
-  "version": "1.2.0",
   "license": "CC-BY-SA-4.0",
-  "main": "index.js",
-  "types": "types.d.ts",
+  "author": "Matt Tingen <matt.tingen@gmail.com>",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.cjs"
+    }
+  },
+  "main": "./index.cjs",
+  "types": "./index.d.ts",
+  "files": [
+    "index.js",
+    "index.cjs",
+    "index.d.ts",
+    "cedict.json"
+  ],
   "scripts": {
-    "build": "tsx build"
+    "build": "tsx src"
   },
   "devDependencies": {
     "@types/node": "^22.13.11",
+    "prettier": "^3.5.3",
+    "prettier-plugin-packagejson": "^2.5.10",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }
