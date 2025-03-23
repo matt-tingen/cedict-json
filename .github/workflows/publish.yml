@@ -1,0 +1,66 @@
+name: Publish to npm
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run npm publish with --dry-run flag'
+        required: false
+        default: 'true'
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        id: build
+        run: |
+          VERSION=$(pnpm run --silent build)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check if version exists
+        id: check_version
+        env:
+          VERSION: ${{steps.build.outputs.version}}
+        run: |
+          VERSION_EXISTS=$(npm show "cedict-json@$VERSION" 2>/dev/null || true)
+          if [[ -n "$VERSION_EXISTS" ]]; then
+            echo "Version $VERSION already exists, skipping publish."
+            echo "version_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "version_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set version
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: pnpm version ${{ steps.build.outputs.version }} --no-git-tag-version
+
+      - name: Publish
+        if: steps.check_version.outputs.version_exists == 'false'
+        run: |
+          if [ "${{ inputs.dry_run }}" == "true" ]; then
+            npm publish --provenance --dry-run
+          else
+            npm publish --provenance
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
